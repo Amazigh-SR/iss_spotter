@@ -2,7 +2,7 @@
 const request = require("request");
 
 //Function that will fetch my IP via ipify.org
-const fetchMyIP = function (callback) {
+const fetchMyIP = function(callback) {
   const url = "https://api.ipify.org?format=json";
 
   request(`${url}`, (error, response, body) => {
@@ -30,7 +30,7 @@ const fetchMyIP = function (callback) {
 };
 
 //Function that will fetch my longitude and latitude
-const fetchCoordsByIP = function (ip, callback) {
+const fetchCoordsByIP = function(ip, callback) {
   request(`https://freegeoip.app/json/${ip}`, (error, response, body) => {
     //Error handling 1
     if (error) {
@@ -54,7 +54,7 @@ const fetchCoordsByIP = function (ip, callback) {
 };
 
 //Function that will give the times that ISS will fly over given coordinates
-const fetchISSFlyOverTimes = function (coordinates, callback) {
+const fetchISSFlyOverTimes = function(coordinates, callback) {
   request(
     `http://api.open-notify.org/iss-pass.json?lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
     (error, response, body) => {
@@ -80,23 +80,20 @@ const fetchISSFlyOverTimes = function (coordinates, callback) {
   );
 };
 
-const nextISSTimesForMyLocation = function (callback) {
+const nextISSTimesForMyLocation = function(callback) {
   fetchMyIP((error, ip) => {
     if (error) {
-      console.log("It did not work!", error);
-      return;
+      return callback(error, null);
     }
     // console.log("It worked! Returned IP:", ip);
     fetchCoordsByIP(ip, (error, coordinates) => {
       if (error) {
-        console.log("It did not work!", error);
-        return;
+        return callback(error, null);
       }
       // console.log(`It worked! Here are your coordinates:`, coordinates);
       fetchISSFlyOverTimes(coordinates, (error, responses) => {
         if (error) {
-          console.log("It did not work!", error);
-          return;
+          return callback(error, null);
         }
         // console.log(`It worked! Here are your coordinates:`, responses);
         callback(null, responses);
